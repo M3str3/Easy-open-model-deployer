@@ -34,7 +34,6 @@ WARNING: If no model is specified, but a pipeline is, the system will choose the
 - "translation_xx_to_yy": For translation between languages, where xx and yy are ISO language codes.
 - "zero-shot-classification": For text classification without the need for specific training labels.
 - "conversational": To build conversations.
-- "image-classification": For image classification (requires specific models).
 
 You can find a complete and updated list of available pipelines in the Hugging Face Transformers documentation.
 
