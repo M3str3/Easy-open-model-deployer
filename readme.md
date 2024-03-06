@@ -5,13 +5,13 @@
   - [Searching for a Pipeline](#searching-for-a-pipeline)
   - [Searching for a Model](#searching-for-a-model)
   - [Getting Started](#getting-started)
-    - [Launching Container: `docker run -p 80:80 -e PIPELANE=<pipeline_name> ai-deployer`](#launching-container-docker-run--p-8080--e-pipelanepipeline_name-ai-deployer)
+    - [Launching Container: `docker run -p 80:8080 -e PIPELANE=<pipeline_name> ai-deployer`](#launching-container-docker-run--p-808080--e-pipelanepipeline_name-ai-deployer)
 - [Spanish documentation / Documentación en Español](#spanish-documentation--documentación-en-español)
   - [Introducción](#introducción)
   - [Buscando un modelo](#buscando-un-modelo)
   - [Eligiendo una pipeline](#eligiendo-una-pipeline)
   - [Como empezar](#como-empezar)
-    - [Montar contenedor: `docker run -p 80:80 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`](#montar-contenedor-docker-run--p-8080--e-pipelanenombre_de_la_pipeline-ai-deployer)
+    - [Montar contenedor: `docker run -p 80:8080 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`](#montar-contenedor-docker-run--p-808080--e-pipelanenombre_de_la_pipeline-ai-deployer)
 # English documentation / Documentación en Ingles
 
 ## Introduction
@@ -45,7 +45,7 @@ To find a model on Hugging Face that fits your needs, visit the Hugging Face web
 - Clone repository: `git clone https://github.com/M3str3/Easy-open-model-deployer.git`
 - Build image: `docker build -t ai-deployer`.
 
-### Launching Container: `docker run -p 80:80 -e PIPELANE=<pipeline_name> ai-deployer`
+### Launching Container: `docker run -p 80:8080 -e PIPELANE=<pipeline_name> ai-deployer`
   - Replace <pipeline_name> with the name of the pipeline you wish to use, for example, fill-mask.
 
 ----
@@ -82,8 +82,8 @@ Puedes encontrar una lista completa y actualizada de las pipelines disponibles e
 - Copiar repositorio: `git clone https://github.com/M3str3/Easy-open-model-deployer.git`
 - Construir imagen: `docker build -t ai-deployer .`
 
-### Montar contenedor: `docker run -p 80:80 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`
-  - Ejemplo: `docker run -p 80:80 -e PIPELANE=sentiment-analysis ai-deployer`
+### Montar contenedor: `docker run -p 80:8080 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`
+  - Ejemplo: `docker run -p 80:8080 -e PIPELANE=sentiment-analysis ai-deployer`
   - Reemplaza <nombre_de_la_pipeline> con el nombre de la pipeline que deseas utilizar, por ejemplo, fill-mask.
   
 
