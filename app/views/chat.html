@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>API playground</title>
+    <link id="favicon" rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        #chat {
+            border: 1px solid #ccc;
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 300px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 80px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 80px;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h3>MODEL LOADED: %MODEL%</h3>
+        <h3>PIPELANE LOADED: %PIPELANE%</h3>
+        <div id="chat"></div>
+        <input type="text" id="mensaje" placeholder="Write your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function sendMessage() {
+            var inputMensaje = document.getElementById('mensaje');
+            var mensaje = inputMensaje.value;
+            if (mensaje.trim() === '') return; 
+
+            document.getElementById('chat').innerHTML += `<p><strong>PROMPT:</strong> ${mensaje}</p>`;
+            fetch('/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ "prompt": mensaje }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("ERROR: Check output in console")
+                        console.error(data)
+                        document.getElementById('chat').innerHTML += `<p><strong>MODEL-ERROR:</strong> ${JSON.stringify(data.error)}</p>`;
+                    } else {
+                        document.getElementById('chat').innerHTML += `<p><strong>MODEL:</strong> ${JSON.stringify(data.prediction)}</p>`;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+
+            inputMensaje.value = ''; 
+        }
+
+        document.getElementById('mensaje').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+
+</html>
