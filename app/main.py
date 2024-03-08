@@ -25,8 +25,7 @@ def load_views():
         view_name = os.path.basename(file_path).split('.')[0]
         with open(file_path, 'r') as f:
             cont = f.read()
-            views[view_name] = cont.replace("%MODEL%", model.MODEL_NAME).replace(
-                "%PIPELANE%", model.PIPELANE)
+            views[view_name] = cont.replace("%MODEL%", model.MODEL_NAME)#.replace("%PIPELINE%", model.PIPELINE)
     return views
 
 
@@ -34,20 +33,20 @@ def load_views():
 async def startup_event():
     global VIEWS
     model_name = os.getenv("MODEL", None)
-    pipelane_name = os.getenv("PIPELANE", None)
+    pipeline_name = os.getenv("PIPELINE", None)
 
-    if pipelane_name is None and model_name is None:
-        print("No MODEL or PIPELANE especified")
+    if pipeline_name is None and model_name is None:
+        print("No MODEL or pipeline especified")
         exit(1)
 
     model.MODEL_NAME = model_name
-    model.PIPELANE = pipelane_name
+    model.PIPELINE = pipeline_name
 
     if model_name is not None:
         print(f"[*] MODEL selected: {model_name}")
         model.load_model(model_name=model_name)
-    elif pipelane_name is not None:
-        model.load_model_from_pipelane(pipelane_name)
+    elif pipeline_name is not None:
+        model.load_model_from_pipeline(pipeline_name)
 
     VIEWS = load_views()
 

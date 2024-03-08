@@ -5,13 +5,13 @@
   - [Searching for a Pipeline](#searching-for-a-pipeline)
   - [Searching for a Model](#searching-for-a-model)
   - [Getting Started](#getting-started)
-    - [Launching Container: `docker run -p 80:8080 -e PIPELANE=<pipeline_name> ai-deployer`](#launching-container-docker-run--p-808080--e-pipelanepipeline_name-ai-deployer)
+    - [Launching Container: `docker run -p 80:8080 -e PIPELINE=<pipeline_name> ai-deployer`](#launching-container-docker-run--p-808080--e-pipelinepipeline_name-ai-deployer)
 - [Spanish documentation / Documentación en Español](#spanish-documentation--documentación-en-español)
   - [Introducción](#introducción)
   - [Buscando un modelo](#buscando-un-modelo)
   - [Eligiendo una pipeline](#eligiendo-una-pipeline)
   - [Como empezar](#como-empezar)
-    - [Montar contenedor: `docker run -p 80:8080 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`](#montar-contenedor-docker-run--p-808080--e-pipelanenombre_de_la_pipeline-ai-deployer)
+    - [Montar contenedor: `docker run -p 80:8080 -e PIPELINE=<nombre_de_la_pipeline> ai-deployer`](#montar-contenedor-docker-run--p-808080--e-pipelinenombre_de_la_pipeline-ai-deployer)
 # English documentation / Documentación en Ingles
 
 ## Introduction
@@ -45,7 +45,7 @@ To find a model on Hugging Face that fits your needs, visit the Hugging Face web
 - Clone repository: `git clone https://github.com/M3str3/Easy-open-model-deployer.git`
 - Build image: `docker build -t ai-deployer`.
 
-### Launching Container: `docker run -p 80:8080 -e PIPELANE=<pipeline_name> ai-deployer`
+### Launching Container: `docker run -p 80:8080 -e PIPELINE=<pipeline_name> ai-deployer`
   - Replace <pipeline_name> with the name of the pipeline you wish to use, for example, fill-mask.
 
 ----
@@ -55,7 +55,7 @@ To find a model on Hugging Face that fits your needs, visit the Hugging Face web
 ## Introducción
 `ai-deployer` es una herramienta diseñada para democratizar el acceso a la inteligencia artificial, permitiendo a usuarios sin conocimientos técnicos y a programadores novatos desplegar APIs de Python que integran modelos de inteligencia artificial disponibles en Hugging Face con un solo comando. Este proyecto facilita la experimentación y el despliegue rápido de soluciones de IA para tareas específicas, abriendo un abanico de posibilidades en diversas áreas como análisis de texto, generación de contenido, reconocimiento de imágenes, entre otros.
 
-Para desplegar el proyecto necesitaras especificar una pipelane, para cuestiones mas complejas puedes especificar el modelo.
+Para desplegar el proyecto necesitaras especificar una pipeline, para cuestiones mas complejas puedes especificar el modelo.
 
 ## Buscando un modelo
 Para buscar un modelo en Hugging Face que se ajuste a tus necesidades, visita el sitio web de [Hugging Face](https://huggingface.co/models) y utiliza la barra de búsqueda para encontrar modelos por nombre, tipo de tarea, o lenguaje. Revisa la documentación del modelo y los ejemplos de uso para asegurarte de que cumple con tus expectativas.
@@ -63,7 +63,7 @@ Para buscar un modelo en Hugging Face que se ajuste a tus necesidades, visita el
 ## Eligiendo una pipeline
 Las pipelines son interfaces predefinidas que simplifican la interacción con los modelos. Aqui te dejo un listado de las principales.
 
-ADVERTENCIA: si no se especifica modelo, pero si pipelane, el sistema elegira el modelo predeterminado para esa pipelane.
+ADVERTENCIA: si no se especifica modelo, pero si pipeline, el sistema elegira el modelo predeterminado para esa pipeline.
 
 - "sentiment-analysis": Para análisis de sentimiento.
 - "text-generation": Para generación de texto.
@@ -82,8 +82,8 @@ Puedes encontrar una lista completa y actualizada de las pipelines disponibles e
 - Copiar repositorio: `git clone https://github.com/M3str3/Easy-open-model-deployer.git`
 - Construir imagen: `docker build -t ai-deployer .`
 
-### Montar contenedor: `docker run -p 80:8080 -e PIPELANE=<nombre_de_la_pipeline> ai-deployer`
-  - Ejemplo: `docker run -p 80:8080 -e PIPELANE=sentiment-analysis ai-deployer`
+### Montar contenedor: `docker run -p 80:8080 -e PIPELINE=<nombre_de_la_pipeline> ai-deployer`
+  - Ejemplo: `docker run -p 80:8080 -e PIPELINE=sentiment-analysis ai-deployer`
   - Reemplaza <nombre_de_la_pipeline> con el nombre de la pipeline que deseas utilizar, por ejemplo, fill-mask.
   
 

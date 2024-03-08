@@ -4,7 +4,7 @@ from transformers           import AutoModel, AutoTokenizer
 TOKENIZER = None
 MODEL = None
 MODEL_NAME = None
-PIPELANE = None
+PIPELINE = None
 
 
 def load_model(model_name: str):
@@ -20,31 +20,31 @@ def load_model(model_name: str):
     except Exception as e:
         print(f"[!] Error loading MODEL \"{MODEL_NAME}\": {e}")
 
-def load_model_from_pipelane(pipelane_name: str):
-    global MODEL_NAME, PIPELANE
+def load_model_from_pipeline(pipeline_name: str):
+    global MODEL_NAME, PIPELINE
     
-    print(f"[*] Loading MODEL from PIPELANE \"{pipelane_name}\" ....")
+    print(f"[*] Loading MODEL from pipeline \"{pipeline_name}\" ....")
     try:
-        generator = pipeline(pipelane_name)
+        generator = pipeline(pipeline_name)
         
         MODEL_NAME = generator.model.name_or_path
         load_model(MODEL_NAME)
 
-        PIPELANE = pipelane_name
+        PIPELINE = pipeline_name
     except Exception as e:
-        print(f"[!] Error loading MODEL from PIPELANE \"{pipelane_name}\": {e}")
+        print(f"[!] Error loading MODEL from pipeline \"{pipeline_name}\": {e}")
 
 
 def predict(prompt: str):
-    global MODEL_NAME, PIPELANE, MODEL, TOKENIZER
-    print(f"PIPA - {PIPELANE}")
-    if not MODEL and not TOKENIZER and not PIPELANE:
+    global MODEL_NAME, PIPELINE, MODEL, TOKENIZER
+    print(f"PIPA - {PIPELINE}")
+    if not MODEL and not TOKENIZER and not PIPELINE:
         return {"error": "No MODEL loaded yet..."}
 
     try:
-        if PIPELANE:
-            generator = pipeline(PIPELANE, model=MODEL_NAME, tokenizer=TOKENIZER)
-            match PIPELANE:
+        if PIPELINE:
+            generator = pipeline(PIPELINE, model=MODEL_NAME, tokenizer=TOKENIZER)
+            match PIPELINE:
                 case "text-generation":
                     result = generator(prompt, max_length=50,
                                     num_return_sequences=1)
@@ -77,4 +77,4 @@ def predict(prompt: str):
             
         return result    
 
-    raise Exception("No pipelane especified")
+    raise Exception("No pipeline especified")
