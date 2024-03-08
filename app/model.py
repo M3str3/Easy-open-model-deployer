@@ -1,53 +1,64 @@
-from transformers           import pipeline
-from transformers           import AutoModel, AutoTokenizer
+from config import CONFIG
+
+from transformers import pipeline
+from transformers import AutoModel, AutoTokenizer
 
 TOKENIZER = None
-MODEL = None
-MODEL_NAME = None
-PIPELINE = None
-
 
 def load_model(model_name: str):
-    global TOKENIZER, MODEL, MODEL_NAME
 
-    MODEL_NAME = model_name
-    
-    print(f"[*] Loading MODEL \"{MODEL_NAME}\" ....")
+    CONFIG.MODEL_NAME = model_name
+
+    print(f"[*] Loading MODEL \"{CONFIG.MODEL_NAME}\" ....")
     try:
-        MODEL = AutoModel.from_pretrained(MODEL_NAME)
-        TOKENIZER = AutoTokenizer.from_pretrained(MODEL_NAME)
-        print(f"[*] MODEL \"{MODEL_NAME}\" loaded successfully.")
+        CONFIG.MODEL = AutoModel.from_pretrained(CONFIG.MODEL_NAME)
+        CONFIG.TOKENIZER = AutoTokenizer.from_pretrained(CONFIG.MODEL_NAME)
+        print(f"[*] MODEL \"{CONFIG.MODEL_NAME}\" loaded successfully.")
     except Exception as e:
-        print(f"[!] Error loading MODEL \"{MODEL_NAME}\": {e}")
+        print(f"[!] Error loading MODEL \"{CONFIG.MODEL_NAME}\": {e}")
+
 
 def load_model_from_pipeline(pipeline_name: str):
-    global MODEL_NAME, PIPELINE
-    
+
     print(f"[*] Loading MODEL from pipeline \"{pipeline_name}\" ....")
     try:
         generator = pipeline(pipeline_name)
-        
-        MODEL_NAME = generator.model.name_or_path
-        load_model(MODEL_NAME)
 
-        PIPELINE = pipeline_name
+        CONFIG.MODEL_NAME = generator.model.name_or_path
+        load_model(CONFIG.MODEL_NAME)
+
+        CONFIG.PIPELINE = pipeline_name
     except Exception as e:
-        print(f"[!] Error loading MODEL from pipeline \"{pipeline_name}\": {e}")
+        print(
+            f"[!] Error loading MODEL from pipeline \"{pipeline_name}\": {e}")
 
 
-def predict(prompt: str):
-    global MODEL_NAME, PIPELINE, MODEL, TOKENIZER
-    print(f"PIPA - {PIPELINE}")
-    if not MODEL and not TOKENIZER and not PIPELINE:
-        return {"error": "No MODEL loaded yet..."}
+def predict(prompt: str, pipelane_name: str = None, model_name: str = None):
+
+    pipeline_name_selected = CONFIG.PIPELINE
+    model_name_selected = CONFIG.MODEL_NAME
+
+    if model_name is not None:
+        model_name_selected = model_name
+
+    if pipelane_name is not None and pipelane_name != CONFIG.PIPELINE:
+        pipeline_name_selected = pipelane_name
+        model_name_selected = model_name
+
+    if not model_name_selected and not pipeline_name_selected:
+        return {"error": "No MODEL OR PIPELINE loaded yet..."}
 
     try:
-        if PIPELINE:
-            generator = pipeline(PIPELINE, model=MODEL_NAME, tokenizer=TOKENIZER)
-            match PIPELINE:
+        if pipeline_name_selected:
+            print(
+                f"Executing {pipeline_name_selected} in {model_name_selected}")
+            generator = pipeline(pipeline_name_selected,
+                                 model=model_name_selected)
+            model_name_executed = generator.model.name_or_path
+            match pipeline_name_selected:
                 case "text-generation":
                     result = generator(prompt, max_length=50,
-                                    num_return_sequences=1)
+                                       num_return_sequences=1)
                     result = result[0]['generated_text']
                 case "question-answering":
                     result = generator({
@@ -69,12 +80,15 @@ def predict(prompt: str):
                         result += generator(prompt)[0]['summary_text']
                 case _:
                     result = generator(prompt)
-            return result
-    
+            return {
+                "model": model_name_executed,
+                "task": pipeline_name_selected,
+                "prediction": result}
+
     except Exception as e:
-        print("ERROR ",e)
-        result = {"error":{"output":str(e),"raw":e}}
-            
-        return result    
+        print("ERROR ", e)
+        result = {"error": {"output": str(e), "raw": e}}
+
+        return result
 
     raise Exception("No pipeline especified")
