@@ -77,20 +77,38 @@
 
 <body>
     <div class="container">
-        <h3>MODEL LOADED: %MODEL%</h3>
-        <h3>PIPELANE LOADED: %PIPELANE%</h3>
+        <h3>MODEL LOADED: <span id="model-span"><span></h3>
+        <h3>PIPELINE LOADED: <span id="pipeline-span"></span></h3>
         <div id="chat"></div>
         <input type="text" id="mensaje" placeholder="Write your message...">
         <button onclick="sendMessage()">Send</button>
     </div>
     <script>
+
+        setTimeout( function() {
+            fetch('/config/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("model-span").innerHTML = data.MODEL_NAME
+                    document.getElementById("pipeline-span").innerHTML = data.PIPELINE
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        },0)
+
         function sendMessage() {
             var inputMensaje = document.getElementById('mensaje');
             var mensaje = inputMensaje.value;
             if (mensaje.trim() === '') return; 
 
             document.getElementById('chat').innerHTML += `<p><strong>PROMPT:</strong> ${mensaje}</p>`;
-            fetch('/predict/', {
+            fetch('/predict', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
