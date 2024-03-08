@@ -1,17 +1,16 @@
 import os
 import model
 
+from config import CONFIG
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
 from pydantic import BaseModel
 from fastapi import FastAPI
-
-from dotenv import load_dotenv
 from glob import glob
 
 import starlette.status as status
 
-load_dotenv()
 app = FastAPI()
 VIEWS = {}
 
@@ -25,7 +24,7 @@ def load_views():
         view_name = os.path.basename(file_path).split('.')[0]
         with open(file_path, 'r') as f:
             cont = f.read()
-            views[view_name] = cont.replace("%MODEL%", model.MODEL_NAME)#.replace("%PIPELINE%", model.PIPELINE)
+            views[view_name] = cont
     return views
 
 
@@ -35,12 +34,8 @@ async def startup_event():
     model_name = os.getenv("MODEL", None)
     pipeline_name = os.getenv("PIPELINE", None)
 
-    if pipeline_name is None and model_name is None:
-        print("No MODEL or pipeline especified")
-        exit(1)
-
-    model.MODEL_NAME = model_name
-    model.PIPELINE = pipeline_name
+    CONFIG.MODEL_NAME = model_name
+    CONFIG.PIPELINE = pipeline_name
 
     if model_name is not None:
         print(f"[*] MODEL selected: {model_name}")
@@ -58,10 +53,12 @@ async def root():
 
 
 class PredictionRequest(BaseModel):
+    model: Optional[str] = None
+    task: Optional[str] = None
     prompt: str
 
 
-@app.post("/predict/")
+@app.post("/predict")
 async def predict(request: PredictionRequest):
     """Function to predict response from a prompt
 
@@ -70,11 +67,33 @@ async def predict(request: PredictionRequest):
         "prompt": "YOUR PROMPT"
     }
     """
-    out = model.predict(request.prompt)
-    if 'error' in out:
-        return out
-    return {"prediction": out}
+    if request.task and not CONFIG.PIPELINE:
+        global VIEWS
 
+        CONFIG.PIPELINE = request.task
+        model.load_model_from_pipeline(request.task)
+        VIEWS = load_views()
+    out = model.predict(
+        request.prompt, pipelane_name=request.task, model_name=request.model)
+    return out
+
+
+
+@app.get("/config")
+def get_config():
+    return {"MODEL_NAME":CONFIG.MODEL_NAME,"PIPELINE":CONFIG.PIPELINE}
+
+class ConfigRequest(BaseModel):
+    model: Optional[str] = None
+    pipeline: Optional[str] = None
+
+@app.post("/config")
+def post_config( request: ConfigRequest):
+    if request.model is not None:
+        CONFIG.MODEL_NAME = request.model
+    
+    if request.pipeline is not None:
+        CONFIG.PIPELINE = request.pipeline
 
 @app.get("/ui", response_class=HTMLResponse)
 def get_ui():
@@ -90,4 +109,4 @@ def get_ui(view):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app=app, host="0.0.0.0", port=8888)
+    uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)
